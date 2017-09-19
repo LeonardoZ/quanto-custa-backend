@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.leonardoz.quantocusta.contrato.ArtefatoDto;
 import br.com.leonardoz.quantocusta.contrato.CriarAtualizarArtefatoDto;
-import br.com.leonardoz.quantocusta.contrato.Removido;
+import br.com.leonardoz.quantocusta.contrato.RemovidoDto;
 import br.com.leonardoz.quantocusta.entidade.Artefato;
 import br.com.leonardoz.quantocusta.entidade.UnidadeDeSoftware;
 import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;
@@ -73,10 +73,10 @@ public class ArtefatosController {
 	}
 
 	@DeleteMapping("/artefato/{uuid}")
-	public Removido remover(@PathVariable String uuid) throws RecursoNaoEncontradoException {
+	public RemovidoDto remover(@PathVariable String uuid) throws RecursoNaoEncontradoException {
 		Artefato artefato = recuperarArtefato(uuid);
 		artefatoRepositorio.delete(artefato.getId());
-		return new Removido("Unidade de Software", uuid, "Unidade de Software removida com sucesso");
+		return new RemovidoDto("Unidade de Software", uuid, "Unidade de Software removida com sucesso");
 	}
 
 	private UnidadeDeSoftware recuperarUnidadeDeSoftware(String uuid) {

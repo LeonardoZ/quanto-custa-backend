@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.leonardoz.quantocusta.contrato.CriarAtualizarUnidadeDeSoftwareDto;
-import br.com.leonardoz.quantocusta.contrato.Removido;
+import br.com.leonardoz.quantocusta.contrato.RemovidoDto;
 import br.com.leonardoz.quantocusta.contrato.UnidadeDeSoftwareDto;
 import br.com.leonardoz.quantocusta.entidade.Orcamento;
 import br.com.leonardoz.quantocusta.entidade.UnidadeDeSoftware;
@@ -75,10 +75,10 @@ public class UnidadesDeSoftwareController {
 	}
 
 	@DeleteMapping("/unidade/{uuid}")
-	public Removido remover(@PathVariable String uuid) throws RecursoNaoEncontradoException {
+	public RemovidoDto remover(@PathVariable String uuid) throws RecursoNaoEncontradoException {
 		UnidadeDeSoftware unidade = recuperarUnidade(uuid);
 		unidadeRepositorio.delete(unidade.getId());
-		return new Removido("Unidade de Software", uuid, "Unidade de Software removida com sucesso");
+		return new RemovidoDto("Unidade de Software", uuid, "Unidade de Software removida com sucesso");
 	}
 	
 	private Orcamento recuperarOrcamento(String uuid) {

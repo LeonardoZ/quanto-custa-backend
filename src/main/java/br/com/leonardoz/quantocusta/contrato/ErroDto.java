@@ -1,12 +1,12 @@
 package br.com.leonardoz.quantocusta.contrato;
 
-public class Erro {
+public class ErroDto {
 
 	private String mensagem;
 	private String uri;
 	private int status;
 
-	public Erro(String mensagem, String uri, int status) {
+	public ErroDto(String mensagem, String uri, int status) {
 		super();
 		this.mensagem = mensagem;
 		this.uri = uri;

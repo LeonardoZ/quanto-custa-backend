@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.leonardoz.quantocusta.contrato.AtualizarOrcamentoDto;
 import br.com.leonardoz.quantocusta.contrato.CriarOrcamentoDto;
 import br.com.leonardoz.quantocusta.contrato.OrcamentoDto;
-import br.com.leonardoz.quantocusta.contrato.Removido;
+import br.com.leonardoz.quantocusta.contrato.RemovidoDto;
 import br.com.leonardoz.quantocusta.entidade.Orcamento;
 import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;
 import br.com.leonardoz.quantocusta.repositorio.OrcamentosRepository;
@@ -70,10 +70,10 @@ public class OrcamentoController {
 	}
 
 	@DeleteMapping("/orcamento/{uuid}/")
-	public Removido remover(@PathVariable String uuid) throws RecursoNaoEncontradoException {
+	public RemovidoDto remover(@PathVariable String uuid) throws RecursoNaoEncontradoException {
 		Orcamento orcamento = recuperarOrcamento(uuid);
 		repositorio.delete(orcamento.getId());
-		return new Removido("Orcamento", uuid, "Orcamento removido com sucesso");
+		return new RemovidoDto("Orcamento", uuid, "Orcamento removido com sucesso");
 	}
 
 	private Orcamento recuperarOrcamento(String uuid) {

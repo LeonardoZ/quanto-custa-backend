@@ -1,12 +1,12 @@
 package br.com.leonardoz.quantocusta.contrato;
 
-public class Removido {
+public class RemovidoDto {
 
 	private String recurso;
 	private String uuid;
 	private String mensagem;
 
-	public Removido(String recurso, String uuid, String mensagem) {
+	public RemovidoDto(String recurso, String uuid, String mensagem) {
 		super();
 		this.recurso = recurso;
 		this.uuid = uuid;
