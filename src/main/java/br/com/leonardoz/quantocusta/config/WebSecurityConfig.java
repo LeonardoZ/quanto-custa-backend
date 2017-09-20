@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.session.SessionManagementFilter;
 
 import br.com.leonardoz.quantocusta.seguranca.JwtAuthenticationEntryPoint;
 import br.com.leonardoz.quantocusta.seguranca.JwtAuthenticationTokenFilter;
@@ -46,14 +45,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
         return new JwtAuthenticationTokenFilter();
     }
-    
-
-	@Bean
-	public CorsFilter corsFilter() {
-		CorsFilter filter = new CorsFilter();
-		return filter;
-	}
-	
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -62,23 +53,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/swagger-**/**").permitAll()
                 .antMatchers("/v2/api-docs/**").permitAll()
                 .antMatchers("/webjars/**").permitAll()
                 .antMatchers(
-                        HttpMethod.GET,
-                        "/",
-                        "/*.html",
-                        "/favicon.ico",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js"
+                   HttpMethod.GET,
+                   "/",
+                   "/*.html",
+                   "/favicon.ico",
+                   "/**/*.html",
+                   "/**/*.css",
+                   "/**/*.js"
                 ).permitAll()
-                .antMatchers(
-                        HttpMethod.POST,
-                        "/user"
-                ).permitAll()
+                .antMatchers("/usuario")
+                	.permitAll()
                 
                 .anyRequest().authenticated();
 
@@ -86,6 +76,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.headers().cacheControl();
-        httpSecurity.addFilterBefore(corsFilter(), SessionManagementFilter.class);
+//        httpSecurity.addFilterBefore(corsFilter(), SessionManagementFilter.class);
     }
 }

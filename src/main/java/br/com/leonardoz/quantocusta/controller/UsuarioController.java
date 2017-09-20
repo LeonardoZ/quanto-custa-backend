@@ -40,15 +40,15 @@ public class UsuarioController {
 	@Autowired
 	private PasswordEncoder encoder;
 
-	@GetMapping(value = "/user")
-	public JwtUser getAuthenticatedUser(HttpServletRequest request) {
+	@GetMapping(value = "/usuario")
+	public JwtUser recuperarUsuarioAutenticado(HttpServletRequest request) {
 		String token = request.getHeader(tokenHeader).substring(7);
 		String username = jwtTokenUtil.getUsernameFromToken(token);
 		JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
 		return user;
 	}
 
-	@PostMapping(value = "/user")
+	@PostMapping(value = "/usuario")
 	public ResponseEntity<?> criarNovoUsuario(@RequestBody CriarUsuarioDto dto) throws ConstraintViolationException {
 		Usuario usuario = mapper.map(dto, Usuario.class);
 		usuario.setSenha(encoder.encode(dto.getSenha()));

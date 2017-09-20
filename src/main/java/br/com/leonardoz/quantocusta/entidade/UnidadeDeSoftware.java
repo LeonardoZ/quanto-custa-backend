@@ -49,11 +49,10 @@ public class UnidadeDeSoftware extends Entidade {
 	private String titulo;
 
 	@ManyToOne
-	@JoinColumn(name = "orcamento")
+	@JoinColumn(name = "orcamento_id")
 	private Orcamento orcamento;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "unidade")
 	private List<Artefato> artefatos;
 
 	public UnidadeDeSoftware() {

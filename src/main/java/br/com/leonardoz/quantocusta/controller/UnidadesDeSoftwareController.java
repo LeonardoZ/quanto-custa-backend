@@ -56,7 +56,7 @@ public class UnidadesDeSoftwareController {
 	
 	@PostMapping("/unidade/do/orcamento/{orcamentoUuid}")
 	public UnidadeDeSoftwareDto salvar(@PathVariable String orcamentoUuid, 
-													 @RequestBody CriarAtualizarUnidadeDeSoftwareDto dto)
+									   @RequestBody CriarAtualizarUnidadeDeSoftwareDto dto)
 												throws RecursoNaoEncontradoException {
 		Orcamento orcamento = recuperarOrcamento(orcamentoUuid);
 		UnidadeDeSoftware unidade = mapper.map(dto, UnidadeDeSoftware.class);
@@ -92,7 +92,5 @@ public class UnidadesDeSoftwareController {
 		UnidadeDeSoftware unidade = encontrado.orElseThrow(() -> new RecursoNaoEncontradoException("Unidade de Software"));
 		return unidade;
 	}
-	
-	
 
 }

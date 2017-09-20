@@ -20,8 +20,10 @@ import br.com.leonardoz.quantocusta.contrato.CriarOrcamentoDto;
 import br.com.leonardoz.quantocusta.contrato.OrcamentoDto;
 import br.com.leonardoz.quantocusta.contrato.RemovidoDto;
 import br.com.leonardoz.quantocusta.entidade.Orcamento;
+import br.com.leonardoz.quantocusta.entidade.Usuario;
 import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;
 import br.com.leonardoz.quantocusta.repositorio.OrcamentosRepository;
+import br.com.leonardoz.quantocusta.repositorio.UsuariosRepository;
 
 @Transactional
 @RestController
@@ -33,9 +35,13 @@ public class OrcamentoController {
 	@Autowired
 	private ModelMapper mapper;
 
-	@GetMapping("/orcamentos")
-	public Page<OrcamentoDto> listar(Pageable pageable) {
-		Page<OrcamentoDto> pagina = repositorio.findAll(pageable).map(o -> mapper.map(o, OrcamentoDto.class));
+	@GetMapping("/orcamentos/do/usuario/{usuarioUuid}")
+	public Page<OrcamentoDto> listar(Pageable pageable, @PathVariable String usuarioUuid) {
+		Usuario usuario = recuperarUsuario(usuarioUuid);
+		
+		Page<OrcamentoDto> pagina = repositorio
+				.findByUsuarioId(usuario.getId(), pageable)
+				.map(o -> mapper.map(o, OrcamentoDto.class));
 		return pagina;
 	}
 
@@ -45,9 +51,11 @@ public class OrcamentoController {
 		return mapper.map(orcamento, OrcamentoDto.class);
 	}
 
-	@PostMapping("/orcamento")
-	public OrcamentoDto salvar(@RequestBody CriarOrcamentoDto dto) {
+	@PostMapping("/orcamento/do/usuario/{usuarioUuid}")
+	public OrcamentoDto salvar(@PathVariable String usuarioUuid, @RequestBody CriarOrcamentoDto dto) {
+		Usuario usuario = recuperarUsuario(usuarioUuid);
 		Orcamento orcamento = mapper.map(dto, Orcamento.class);
+		orcamento.setUsuario(usuario);
 		Orcamento salvo = repositorio.save(orcamento);
 		return mapper.map(salvo, OrcamentoDto.class);
 	}
@@ -80,6 +88,15 @@ public class OrcamentoController {
 		Optional<Orcamento> encontrado = repositorio.findByUuid(uuid);
 		Orcamento orcamento = encontrado.orElseThrow(() -> new RecursoNaoEncontradoException("Orcamento"));
 		return orcamento;
+	}
+	
+	@Autowired
+	private UsuariosRepository usuarioRepository;
+	
+	private Usuario recuperarUsuario(String uuid) {
+		Optional<Usuario> encontrado = usuarioRepository.findByUuid(uuid);
+		Usuario usuario = encontrado.orElseThrow(() -> new RecursoNaoEncontradoException("Usuário"));
+		return usuario;
 	}
 
 }

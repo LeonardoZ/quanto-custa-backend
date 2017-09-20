@@ -26,13 +26,14 @@ package br.com.leonardoz.quantocusta.entidade;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -70,18 +71,25 @@ public class Orcamento extends Entidade {
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "orcamento", cascade = CascadeType.ALL)
 	private Pagamento pagamento;
 
+	@ManyToOne
+	@JoinColumn(name = "usuario_id", nullable = false)
+	private Usuario usuario;
+
 	public Orcamento() {
 		valoresIniciais();
 	}
 
-	public Orcamento(String nome, String cliente, LocalDateTime criadoEm, LocalDateTime validoAte, String responsavel) {
+	public Orcamento(String nome, String cliente, LocalDateTime criadoEm, LocalDateTime validoAte, String responsavel,
+			List<UnidadeDeSoftware> unidades, Pagamento pagamento, Usuario usuario) {
 		super();
 		this.nome = nome;
 		this.cliente = cliente;
 		this.criadoEm = criadoEm;
 		this.validoAte = validoAte;
 		this.responsavel = responsavel;
-		this.unidades = new LinkedList<>();
+		this.unidades = unidades;
+		this.pagamento = pagamento;
+		this.usuario = usuario;
 	}
 
 	private void valoresIniciais() {
@@ -152,6 +160,14 @@ public class Orcamento extends Entidade {
 	public BigDecimal calcularValorTotal() {
 		return unidades.stream().flatMap(u -> u.getArtefatos().stream()).map(Artefato::getCusto)
 				.reduce((a, b) -> a.add(b)).get();
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }

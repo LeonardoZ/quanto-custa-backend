@@ -9,7 +9,7 @@ import br.com.leonardoz.quantocusta.entidade.Artefato;
 
 public interface ArtefatosRepository extends PagingAndSortingRepository<Artefato, Long> {
 
-	public List<Artefato> findByUnidadeId(Long id);
+	List<Artefato> findByUnidadeId(Long id);
 	
 	Optional<Artefato> findByUuid(String uuid);
 	

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -47,7 +48,16 @@ public class CustomExceptionsHandler {
 		ErroDto erro = new ErroDto(mensagemDeRestricoes(ex), req.getRequestURI(), HttpStatus.CONFLICT.value());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
 	}
-
+	
+	
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<ErroDto> badCredentialsException(HttpServletRequest req, BadCredentialsException ex) {
+		ErroDto erro = new ErroDto("Usuário e/ou senhas não autorizados.", 
+					req.getRequestURI(), HttpStatus.UNAUTHORIZED.value());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+	}
+	
 	private static String mensagemDeRestricoes(ConstraintViolationException ex) {
 		String base = "Conflito ao cadastrar informações. ";
 		String mensagem = constraintCodeMap.get(ex.getConstraintName());

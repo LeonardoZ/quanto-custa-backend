@@ -10,25 +10,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class JwtUser implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
-	private final Long id;
+	private final String uuid;
 	private final String username;
 	private final String password;
 	private final String email;
 	private final Collection<? extends GrantedAuthority> authorities;
 
-	public JwtUser(Long id, String username, String password, String email,
+	public JwtUser(String uuid, String username, String password, String email,
 			Collection<? extends GrantedAuthority> authorities) {
 		super();
-		this.id = id;
+		this.uuid = uuid;
 		this.username = username;
 		this.password = password;
 		this.email = email;
 		this.authorities = authorities;
 	}
 
-	@JsonIgnore
-	public Long getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
 	@Override

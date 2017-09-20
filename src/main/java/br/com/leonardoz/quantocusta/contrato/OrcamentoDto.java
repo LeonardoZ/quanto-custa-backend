@@ -9,6 +9,7 @@ public class OrcamentoDto {
 	private String responsavel;
 	private String criadoEm;
 	private String validoAte;
+	private String usuarioUuid;
 
 	public OrcamentoDto() {
 	}
@@ -59,6 +60,15 @@ public class OrcamentoDto {
 
 	public void setValidoAte(String validoAte) {
 		this.validoAte = validoAte;
+	}
+	
+
+	public String getUsuarioUuid() {
+		return usuarioUuid;
+	}
+
+	public void setUsuarioUuid(String usuarioUuid) {
+		this.usuarioUuid = usuarioUuid;
 	}
 
 	@Override
