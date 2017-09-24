@@ -30,7 +30,7 @@ public class UnidadesDeSoftwareController {
 
 	@Autowired
 	private UnidadesDeSoftwareRepository unidadeRepositorio;
-	
+
 	@Autowired
 	private OrcamentosRepository orcamentoRepositorio;
 
@@ -41,23 +41,26 @@ public class UnidadesDeSoftwareController {
 	public List<UnidadeDeSoftwareDto> listar(@PathVariable String orcamentoUuid) {
 		Orcamento orcamento = recuperarOrcamento(orcamentoUuid);
 		List<UnidadeDeSoftwareDto> unidades = unidadeRepositorio
-			.findByOrcamentoId(orcamento.getId())
-			.stream()
-			.map(u -> mapper.map(u, UnidadeDeSoftwareDto.class))
-			.collect(Collectors.toList());
+				.findByOrcamentoId(orcamento.getId()).stream()
+				.map(u -> {
+					UnidadeDeSoftwareDto dto = mapper.map(u, UnidadeDeSoftwareDto.class);
+					dto.setSubTotal(u.calculaSubTotal());
+					return dto;
+				}).collect(Collectors.toList());
 		return unidades;
 	}
-	
+
 	@GetMapping("/unidade/{uuid}")
 	public UnidadeDeSoftwareDto retornar(@PathVariable String uuid) throws RecursoNaoEncontradoException {
 		UnidadeDeSoftware unidade = recuperarUnidade(uuid);
-		return mapper.map(unidade, UnidadeDeSoftwareDto.class);
+		UnidadeDeSoftwareDto dto = mapper.map(unidade, UnidadeDeSoftwareDto.class);
+		dto.setSubTotal(unidade.calculaSubTotal());
+		return dto;
 	}
-	
+
 	@PostMapping("/unidade/do/orcamento/{orcamentoUuid}")
-	public UnidadeDeSoftwareDto salvar(@PathVariable String orcamentoUuid, 
-									   @RequestBody CriarAtualizarUnidadeDeSoftwareDto dto)
-												throws RecursoNaoEncontradoException {
+	public UnidadeDeSoftwareDto salvar(@PathVariable String orcamentoUuid,
+			@RequestBody CriarAtualizarUnidadeDeSoftwareDto dto) throws RecursoNaoEncontradoException {
 		Orcamento orcamento = recuperarOrcamento(orcamentoUuid);
 		UnidadeDeSoftware unidade = mapper.map(dto, UnidadeDeSoftware.class);
 		unidade.setOrcamento(orcamento);
@@ -66,8 +69,8 @@ public class UnidadesDeSoftwareController {
 	}
 
 	@PutMapping("/unidade/{uuid}")
-	public UnidadeDeSoftwareDto atualizar(@PathVariable String uuid, @RequestBody CriarAtualizarUnidadeDeSoftwareDto dto)
-			throws RecursoNaoEncontradoException {
+	public UnidadeDeSoftwareDto atualizar(@PathVariable String uuid,
+			@RequestBody CriarAtualizarUnidadeDeSoftwareDto dto) throws RecursoNaoEncontradoException {
 		UnidadeDeSoftware unidade = recuperarUnidade(uuid);
 		unidade.setTitulo(dto.getTitulo());
 		unidade = unidadeRepositorio.save(unidade);
@@ -80,16 +83,17 @@ public class UnidadesDeSoftwareController {
 		unidadeRepositorio.delete(unidade.getId());
 		return new RemovidoDto("Unidade de Software", uuid, "Unidade de Software removida com sucesso");
 	}
-	
+
 	private Orcamento recuperarOrcamento(String uuid) {
 		Optional<Orcamento> encontrado = orcamentoRepositorio.findByUuid(uuid);
 		Orcamento orcamento = encontrado.orElseThrow(() -> new RecursoNaoEncontradoException("Orcamento"));
 		return orcamento;
 	}
-	
+
 	private UnidadeDeSoftware recuperarUnidade(String uuid) {
 		Optional<UnidadeDeSoftware> encontrado = unidadeRepositorio.findByUuid(uuid);
-		UnidadeDeSoftware unidade = encontrado.orElseThrow(() -> new RecursoNaoEncontradoException("Unidade de Software"));
+		UnidadeDeSoftware unidade = encontrado
+				.orElseThrow(() -> new RecursoNaoEncontradoException("Unidade de Software"));
 		return unidade;
 	}
 

@@ -24,13 +24,13 @@ SOFTWARE.
 package br.com.leonardoz.quantocusta.entidade;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -49,11 +49,11 @@ public class UnidadeDeSoftware extends Entidade {
 	private String titulo;
 
 	@ManyToOne
-	@JoinColumn(name = "orcamento_id")
+	@JoinColumn(name = "orcamento_id", nullable = false)
 	private Orcamento orcamento;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<Artefato> artefatos;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="unidade")
+	private List<Artefato> artefatos = new ArrayList<>();
 
 	public UnidadeDeSoftware() {
 	}

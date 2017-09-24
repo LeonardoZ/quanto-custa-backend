@@ -1,10 +1,13 @@
 package br.com.leonardoz.quantocusta.contrato;
 
+import java.math.BigDecimal;
+
 public class UnidadeDeSoftwareDto {
 
 	private String uuid;
 	private String titulo;
 	private String orcamentoUuid;
+	private BigDecimal subTotal = BigDecimal.ZERO;
 
 	public UnidadeDeSoftwareDto() {
 	}
@@ -39,4 +42,13 @@ public class UnidadeDeSoftwareDto {
 	public void setOrcamentoUuid(String orcamentoUuid) {
 		this.orcamentoUuid = orcamentoUuid;
 	}
+
+	public BigDecimal getSubTotal() {
+		return subTotal;
+	}
+
+	public void setSubTotal(BigDecimal subTotal) {
+		this.subTotal = subTotal;
+	}
+
 }

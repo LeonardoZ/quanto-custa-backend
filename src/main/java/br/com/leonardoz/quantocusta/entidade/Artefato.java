@@ -47,8 +47,8 @@ public class Artefato extends Entidade {
 	@Column(name = "custo", precision = 8, scale = 2)
 	private BigDecimal custo;
 
-	@ManyToOne
-	@JoinColumn(name = "unidade_id")
+	@ManyToOne()
+	@JoinColumn(name = "unidade_id", nullable = false)
 	private UnidadeDeSoftware unidade;
 
 	public Artefato() {
