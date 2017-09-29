@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.leonardoz.quantocusta.entidade.Usuario;
+import br.com.leonardoz.quantocusta.exceptions.UsuarioNaoConfirmadoException;
 import br.com.leonardoz.quantocusta.repositorio.UsuariosRepository;
 import br.com.leonardoz.quantocusta.seguranca.JwtUserFactory;
 import br.com.leonardoz.quantocusta.util.Concatenador;
@@ -22,6 +23,9 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 		Usuario usuario = userRepository.findByEmailOrLogin(usernameOrLogin, usernameOrLogin)
 				.orElseThrow(() -> new UsernameNotFoundException(
 						Concatenador.concatenar("Nenhum usuário contrado com a informação: ", usernameOrLogin)));
+		if (!usuario.isConfirmado()) {
+			throw new UsuarioNaoConfirmadoException();
+		}
 		return JwtUserFactory.create(usuario);
 	}
 }
