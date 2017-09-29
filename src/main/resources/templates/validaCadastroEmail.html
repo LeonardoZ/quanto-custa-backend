@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+</head>
+<body>
+	<div>
+		<h1>
+			Validação de cadastro do <strong>Quanto-Custa</strong>
+		</h1>
+		<hr />
+		<p>
+			<a th:href="${url}"><strong>Clique aqui</strong></a> para validar o seu cadastro.
+		</p>
+		<hr />
+		<p>Caso não consiga, copie e cole o endereço abaixo em seu
+			navegador.</p>
+			
+		<p th:text="${url}">Endereço</p>
+		<hr />
+		<em>Quanto-Custa - Serviço de validação de cadastro de Usuário.</em>
+	</div>
+</body>
+</html>

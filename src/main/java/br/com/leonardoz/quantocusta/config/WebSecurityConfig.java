@@ -69,13 +69,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 ).permitAll()
                 .antMatchers("/usuario")
                 	.permitAll()
-                
+                .antMatchers("/reenviar/**")
+                	.permitAll()
+                .antMatchers("/validar")
+                	.permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.headers().cacheControl();
-//        httpSecurity.addFilterBefore(corsFilter(), SessionManagementFilter.class);
     }
 }

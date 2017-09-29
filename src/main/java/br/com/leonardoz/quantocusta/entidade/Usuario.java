@@ -19,11 +19,14 @@ public class Usuario extends Entidade {
 
 	@Column(name = "senha", nullable = false)
 	private String senha;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "perfil", length = 25, nullable = false)
 	private Perfil perfil;
-	
+
+	@Column(name = "confirmado", nullable = false)
+	private boolean confirmado = false;
+
 	public Usuario() {
 		this.perfil = Perfil.ROLE_USUARIO;
 	}
@@ -58,6 +61,14 @@ public class Usuario extends Entidade {
 
 	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
+	}
+
+	public boolean isConfirmado() {
+		return confirmado;
+	}
+
+	public void setConfirmado(boolean confirmado) {
+		this.confirmado = confirmado;
 	}
 
 }
