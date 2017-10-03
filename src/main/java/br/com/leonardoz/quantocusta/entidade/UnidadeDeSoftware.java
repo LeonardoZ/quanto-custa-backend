@@ -53,7 +53,7 @@ public class UnidadeDeSoftware extends Entidade {
 	private Orcamento orcamento;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="unidade")
-	private List<Artefato> artefatos = new ArrayList<>();
+	private List<Artefato> artefatos = new LinkedList<>();
 
 	public UnidadeDeSoftware() {
 	}
@@ -93,6 +93,6 @@ public class UnidadeDeSoftware extends Entidade {
 	}
 
 	public BigDecimal calculaSubTotal() {
-		return artefatos.stream().map(Artefato::getCusto).reduce((a, b) -> a.add(b)).get();
+		return artefatos.stream().map(Artefato::getCusto).reduce((a, b) -> a.add(b)).orElseGet(() -> BigDecimal.ZERO);
 	}
 }

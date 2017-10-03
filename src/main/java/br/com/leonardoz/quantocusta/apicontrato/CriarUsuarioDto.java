@@ -1,4 +1,4 @@
-package br.com.leonardoz.quantocusta.contrato;
+package br.com.leonardoz.quantocusta.apicontrato;
 
 public class CriarUsuarioDto {
 

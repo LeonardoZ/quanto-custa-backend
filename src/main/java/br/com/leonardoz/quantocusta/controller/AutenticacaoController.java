@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.leonardoz.quantocusta.contrato.JwtAutenticadoDto;
-import br.com.leonardoz.quantocusta.contrato.JwtAutenticacaoDto;
+import br.com.leonardoz.quantocusta.apicontrato.JwtAutenticacaoDto;
+import br.com.leonardoz.quantocusta.apicontrato.JwtAutenticadoDto;
 import br.com.leonardoz.quantocusta.seguranca.JwtTokenUtil;
 
 @RestController

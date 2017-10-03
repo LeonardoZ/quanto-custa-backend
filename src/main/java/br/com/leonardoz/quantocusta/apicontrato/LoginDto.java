@@ -1,4 +1,4 @@
-package br.com.leonardoz.quantocusta.contrato;
+package br.com.leonardoz.quantocusta.apicontrato;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;

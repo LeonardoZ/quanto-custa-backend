@@ -1,9 +1,10 @@
-package br.com.leonardoz.quantocusta.contrato;
+package br.com.leonardoz.quantocusta.apicontrato;
 
-public class ValidarEmailDto {
+public class AlterarSenhaDto {
 
 	private String token;
 	private String email;
+	private String novaSenha;
 
 	public String getEmail() {
 		return email;
@@ -19,6 +20,14 @@ public class ValidarEmailDto {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getNovaSenha() {
+		return novaSenha;
+	}
+
+	public void setNovaSenha(String novaSenha) {
+		this.novaSenha = novaSenha;
 	}
 
 }

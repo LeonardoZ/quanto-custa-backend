@@ -14,9 +14,9 @@ public class MailContentBuilder {
 		this.templateEngine = templateEngine;
 	}
 
-	public String build(String message) {
+	public String build(String message, String template) {
 		Context context = new Context();
 		context.setVariable("url", message);
-		return templateEngine.process("validaCadastroEmail", context);
+		return templateEngine.process(template, context);
 	}
 }

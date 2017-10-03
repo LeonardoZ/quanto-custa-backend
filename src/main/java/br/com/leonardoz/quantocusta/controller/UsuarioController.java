@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.leonardoz.quantocusta.contrato.CriarUsuarioDto;
-import br.com.leonardoz.quantocusta.contrato.ErroDto;
-import br.com.leonardoz.quantocusta.contrato.ReenviarEmailDto;
-import br.com.leonardoz.quantocusta.contrato.ValidarEmailDto;
+import br.com.leonardoz.quantocusta.apicontrato.CriarUsuarioDto;
+import br.com.leonardoz.quantocusta.apicontrato.EmailDto;
+import br.com.leonardoz.quantocusta.apicontrato.ErroDto;
+import br.com.leonardoz.quantocusta.apicontrato.AlterarSenhaDto;
+import br.com.leonardoz.quantocusta.apicontrato.ValidarEmailDto;
 import br.com.leonardoz.quantocusta.email.MailService;
-import br.com.leonardoz.quantocusta.email.UrlAtivacaoService;
+import br.com.leonardoz.quantocusta.email.TokenUrlService;
 import br.com.leonardoz.quantocusta.entidade.Usuario;
 import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;
 import br.com.leonardoz.quantocusta.repositorio.UsuariosRepository;
@@ -50,7 +51,7 @@ public class UsuarioController {
 	private MailService mailService;
 
 	@Autowired
-	private UrlAtivacaoService ativacaoUrlService;
+	private TokenUrlService tokenService;
 
 	@GetMapping(value = "/usuario")
 	public JwtUser recuperarUsuarioAutenticado(HttpServletRequest request) {
@@ -66,22 +67,22 @@ public class UsuarioController {
 		Usuario usuario = mapper.map(dto, Usuario.class);
 		usuario.setSenha(encoder.encode(dto.getSenha()));
 		repositorio.save(usuario);
-		String tokenAtivacao = ativacaoUrlService.gerarUrlToken(dto.getEmail());
-		mailService.prepareAndSend(dto.getEmail(), tokenAtivacao);
+		String tokenAtivacao = tokenService.gerarValidarUrlToken(dto.getEmail());
+		mailService.prepareAndSend(dto.getEmail(), tokenAtivacao, "Validar nova conta", "validaCadastroEmail");
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@PostMapping(value = "/reenviar/email")
-	public ResponseEntity<?> reenviarEmailAtivacao(@RequestBody ReenviarEmailDto dto) {
-		String tokenAtivacao = ativacaoUrlService.gerarUrlToken(dto.getEmail());
+	public ResponseEntity<?> reenviarEmailAtivacao(@RequestBody EmailDto dto) {
+		String tokenAtivacao = tokenService.gerarValidarUrlToken(dto.getEmail());
 	
-		mailService.prepareAndSend(dto.getEmail(), tokenAtivacao);
+		mailService.prepareAndSend(dto.getEmail(), tokenAtivacao, "Validar nova conta","validaCadastroEmail");
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@PostMapping(value = "/validar")
 	public ResponseEntity<?> validarEmailAtivacao(@RequestBody ValidarEmailDto dto, HttpServletRequest req) {
-		boolean tokenEhValido = ativacaoUrlService.tokenEhValido(dto.getToken(), dto.getEmail());
+		boolean tokenEhValido = tokenService.tokenEhValido(dto.getToken(), dto.getEmail());
 		if (tokenEhValido) {
 			Usuario usuario = repositorio.findByEmail(dto.getEmail())
 				.orElseThrow(() -> new RecursoNaoEncontradoException("Usuário"));
@@ -97,5 +98,33 @@ public class UsuarioController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
 		}
 	}
+	
+
+	@PostMapping(value = "/esqueci/senha")
+	public ResponseEntity<?> enviarEmailEsqueciSenha(@RequestBody EmailDto dto) {
+		String tokenAtivacao = tokenService.gerarEsqueciASenhaToken(dto.getEmail());
+	
+		mailService.prepareAndSend(dto.getEmail(), tokenAtivacao, "Alterar a senha", "alterarSenhaEmail");
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+	
+	@PostMapping(value = "/alterar/senha")
+	public ResponseEntity<?> validarEmailAtivacao(@RequestBody AlterarSenhaDto dto, HttpServletRequest req) {
+		boolean tokenEhValido = tokenService.tokenEhValido(dto.getToken(), dto.getEmail());
+		if (tokenEhValido) {
+			Usuario usuario = repositorio.findByEmail(dto.getEmail())
+				.orElseThrow(() -> new RecursoNaoEncontradoException("Usuário"));
+			usuario.setSenha(encoder.encode(dto.getNovaSenha()));
+			repositorio.save(usuario);
+			return ResponseEntity.status(HttpStatus.OK).build();
+		} else {
+			ErroDto body = new ErroDto("Token inválido", req.getRequestURL().toString(),
+					HttpStatus.BAD_REQUEST.value());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+		}
+	}
+	
+	
+	
 
 }

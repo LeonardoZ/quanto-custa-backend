@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.leonardoz.quantocusta.contrato.CriarAtualizarUnidadeDeSoftwareDto;
-import br.com.leonardoz.quantocusta.contrato.RemovidoDto;
-import br.com.leonardoz.quantocusta.contrato.UnidadeDeSoftwareDto;
+import br.com.leonardoz.quantocusta.apicontrato.CriarAtualizarUnidadeDeSoftwareDto;
+import br.com.leonardoz.quantocusta.apicontrato.RemovidoDto;
+import br.com.leonardoz.quantocusta.apicontrato.UnidadeDeSoftwareDto;
 import br.com.leonardoz.quantocusta.entidade.Orcamento;
 import br.com.leonardoz.quantocusta.entidade.UnidadeDeSoftware;
 import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;

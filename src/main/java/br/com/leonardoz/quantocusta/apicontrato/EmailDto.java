@@ -1,6 +1,6 @@
-package br.com.leonardoz.quantocusta.contrato;
+package br.com.leonardoz.quantocusta.apicontrato;
 
-public class ReenviarEmailDto {
+public class EmailDto {
 
 	private String email;
 

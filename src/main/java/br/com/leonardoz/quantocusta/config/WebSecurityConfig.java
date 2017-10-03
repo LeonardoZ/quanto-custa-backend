@@ -72,7 +72,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/reenviar/**")
                 	.permitAll()
                 .antMatchers("/validar")
+                	.permitAll() 
+                .antMatchers("/esqueci/senha")
                 	.permitAll()
+                .antMatchers("/alterar/senha/**")
+                 	.permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import br.com.leonardoz.quantocusta.seguranca.JwtTokenUtil;
 
 @Service
-public class UrlAtivacaoService {
+public class TokenUrlService {
 
 	@Autowired
 	private JwtTokenUtil tokenUtil;
@@ -15,12 +15,21 @@ public class UrlAtivacaoService {
 	@Value("${cors.origin}")
 	private String origin;
 	
-	public String gerarUrlToken(String email) {
+	public String gerarValidarUrlToken(String email) {
 		String urlTemplate = "%s/validar/token/%s/email/%s";
 		String token = tokenUtil.generateToken(email);
 		String url = String.format(urlTemplate, origin, token, email);
 		return url;
 	}
+	
+	
+	public String gerarEsqueciASenhaToken(String email) {
+		String urlTemplate = "%s/alterar/senha/token/%s/email/%s";
+		String token = tokenUtil.generateToken(email);
+		String url = String.format(urlTemplate, origin, token, email);
+		return url;
+	}
+	
 	
 	public boolean tokenEhValido(String token, String email) {
 		return tokenUtil.validateToken(token, email);

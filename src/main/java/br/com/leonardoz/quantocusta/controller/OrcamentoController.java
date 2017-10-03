@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.leonardoz.quantocusta.contrato.AtualizarOrcamentoDto;
-import br.com.leonardoz.quantocusta.contrato.CriarOrcamentoDto;
-import br.com.leonardoz.quantocusta.contrato.OrcamentoDto;
-import br.com.leonardoz.quantocusta.contrato.RemovidoDto;
+import br.com.leonardoz.quantocusta.apicontrato.AtualizarOrcamentoDto;
+import br.com.leonardoz.quantocusta.apicontrato.CriarOrcamentoDto;
+import br.com.leonardoz.quantocusta.apicontrato.OrcamentoDto;
+import br.com.leonardoz.quantocusta.apicontrato.RemovidoDto;
 import br.com.leonardoz.quantocusta.entidade.Orcamento;
 import br.com.leonardoz.quantocusta.entidade.Usuario;
 import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;

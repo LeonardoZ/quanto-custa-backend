@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
-import br.com.leonardoz.quantocusta.contrato.ErroDto;
+import br.com.leonardoz.quantocusta.apicontrato.ErroDto;
 import br.com.leonardoz.quantocusta.util.Concatenador;
 import io.jsonwebtoken.MalformedJwtException;
 

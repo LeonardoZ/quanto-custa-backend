@@ -1,21 +1,18 @@
-package br.com.leonardoz.quantocusta.contrato;
+package br.com.leonardoz.quantocusta.apicontrato;
 
-public class CriarOrcamentoDto {
+import java.time.LocalDateTime;
+
+public class AtualizarOrcamentoDto {
 
 	private String nome;
 	private String cliente;
 	private String responsavel;
+	private LocalDateTime validoAte;
 
-	public CriarOrcamentoDto() {
+	public AtualizarOrcamentoDto() {
 
 	}
 	
-	public CriarOrcamentoDto(String nome, String cliente, String responsavel) {
-		super();
-		this.nome = nome;
-		this.cliente = cliente;
-		this.responsavel = responsavel;
-	}
 
 	public String getNome() {
 		return nome;
@@ -41,4 +38,18 @@ public class CriarOrcamentoDto {
 		this.responsavel = responsavel;
 	}
 
+
+	public LocalDateTime getValidoAte() {
+		return validoAte;
+	}
+
+
+	public void setValidoAte(LocalDateTime validoAte) {
+		this.validoAte = validoAte;
+	}
+	
+	
+
+	
+	
 }
