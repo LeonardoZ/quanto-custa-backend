@@ -21,6 +21,7 @@ import br.com.leonardoz.quantocusta.apicontrato.AlterarSenhaDto;
 import br.com.leonardoz.quantocusta.apicontrato.ValidarEmailDto;
 import br.com.leonardoz.quantocusta.email.MailService;
 import br.com.leonardoz.quantocusta.email.TokenUrlService;
+
 import br.com.leonardoz.quantocusta.entidade.Usuario;
 import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;
 import br.com.leonardoz.quantocusta.repositorio.UsuariosRepository;
@@ -83,6 +84,7 @@ public class UsuarioController {
 	@PostMapping(value = "/validar")
 	public ResponseEntity<?> validarEmailAtivacao(@RequestBody ValidarEmailDto dto, HttpServletRequest req) {
 		boolean tokenEhValido = tokenService.tokenEhValido(dto.getToken(), dto.getEmail());
+	
 		if (tokenEhValido) {
 			Usuario usuario = repositorio.findByEmail(dto.getEmail())
 				.orElseThrow(() -> new RecursoNaoEncontradoException("Usuário"));
@@ -98,7 +100,6 @@ public class UsuarioController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
 		}
 	}
-	
 
 	@PostMapping(value = "/esqueci/senha")
 	public ResponseEntity<?> enviarEmailEsqueciSenha(@RequestBody EmailDto dto) {

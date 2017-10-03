@@ -25,6 +25,7 @@ public class MailService {
 
 	@Async
 	public void prepareAndSend(String recipient, String url, String subject, String template) {
+
 		MimeMessagePreparator messagePreparator = mimeMessage -> {
 			MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
 			messageHelper.setFrom(email);
