@@ -77,7 +77,7 @@ public class OrcamentoController {
 
 	}
 
-	@DeleteMapping("/orcamento/{uuid}/")
+	@DeleteMapping("/orcamento/{uuid}")
 	public RemovidoDto remover(@PathVariable String uuid) throws RecursoNaoEncontradoException {
 		Orcamento orcamento = recuperarOrcamento(uuid);
 		repositorio.delete(orcamento.getId());
