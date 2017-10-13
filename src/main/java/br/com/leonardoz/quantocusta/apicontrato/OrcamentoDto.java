@@ -1,8 +1,7 @@
 package br.com.leonardoz.quantocusta.apicontrato;
 
-
 public class OrcamentoDto {
-	
+
 	private String uuid;
 	private String nome;
 	private String cliente;
@@ -10,14 +9,17 @@ public class OrcamentoDto {
 	private String criadoEm;
 	private String validoAte;
 	private String usuarioUuid;
+	private int quantidadeUnidades;
+	private int quantidadeArtefatos;
+	private double valorTotal;
 
 	public OrcamentoDto() {
 	}
-	
+
 	public String getUuid() {
 		return uuid;
 	}
-	
+
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
@@ -61,7 +63,6 @@ public class OrcamentoDto {
 	public void setValidoAte(String validoAte) {
 		this.validoAte = validoAte;
 	}
-	
 
 	public String getUsuarioUuid() {
 		return usuarioUuid;
@@ -69,6 +70,30 @@ public class OrcamentoDto {
 
 	public void setUsuarioUuid(String usuarioUuid) {
 		this.usuarioUuid = usuarioUuid;
+	}
+
+	public int getQuantidadeUnidades() {
+		return quantidadeUnidades;
+	}
+
+	public void setQuantidadeUnidades(int quantidadeUnidades) {
+		this.quantidadeUnidades = quantidadeUnidades;
+	}
+
+	public int getQuantidadeArtefatos() {
+		return quantidadeArtefatos;
+	}
+
+	public void setQuantidadeArtefatos(int quantidadeArtefatos) {
+		this.quantidadeArtefatos = quantidadeArtefatos;
+	}
+
+	public double getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(double valorTotal) {
+		this.valorTotal = valorTotal;
 	}
 
 	@Override

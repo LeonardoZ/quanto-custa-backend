@@ -24,18 +24,20 @@ SOFTWARE.
 package br.com.leonardoz.quantocusta.entidade;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import br.com.leonardoz.quantocusta.pagamento.CalculadoraPagamento;
+import br.com.leonardoz.quantocusta.pagamento.FormatoPagamento;
 
 /**
  * @author Leonardo H. Zapparoli 2017-07-07
@@ -45,46 +47,40 @@ import javax.persistence.Table;
 public class Pagamento {
 
 	@Id
+	@Column(name = "orcamento_id")
 	private Long id;
 
-	@MapsId
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER)
+	@PrimaryKeyJoinColumn(name = "orcamento_id", referencedColumnName = "orcamento_id")
 	private Orcamento orcamento;
 
 	@Column(name = "vezes", nullable = false)
-	private int pagamentoEmVezes;
+	private int pagamentoEmVezes = 1;
 
 	@Column(name = "juros_mensais", nullable = false, scale = 3, precision = 7)
-	private double jurosMensais;
+	private BigDecimal jurosMensaisPercentuais = BigDecimal.ZERO;
 
 	@Column(name = "entrada", nullable = false, scale = 2, precision = 7)
-	private double entrada;
+	private BigDecimal entrada = BigDecimal.ZERO;
 
 	@Column(name = "desconto_a_vista", nullable = false, scale = 2, precision = 7)
-	private double descontoAVista;
+	private BigDecimal descontoAVistaPercentual = BigDecimal.ZERO;
 
-	@Column(name = "uuid", unique = false, length = 32)
-	private String uuid;
+	@Transient
+	private CalculadoraPagamento calculadora;
 
 	public Pagamento() {
+		calculadora = new CalculadoraPagamento();
 	}
 
-	public Pagamento(int pagamentoEmVezes, double jurosMensais, double entrada, double descontoAVista,
+	public Pagamento(int pagamentoEmVezes, BigDecimal jurosMensais, BigDecimal entrada, BigDecimal descontoAVista,
 			Orcamento orcamento) {
 		super();
 		this.pagamentoEmVezes = pagamentoEmVezes;
-		this.jurosMensais = jurosMensais;
+		this.jurosMensaisPercentuais = jurosMensais;
 		this.entrada = entrada;
-		this.descontoAVista = descontoAVista;
+		this.descontoAVistaPercentual = descontoAVista;
 		this.orcamento = orcamento;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public int getPagamentoEmVezes() {
@@ -95,65 +91,64 @@ public class Pagamento {
 		this.pagamentoEmVezes = pagamentoEmVezes;
 	}
 
-	public double getDescontoAVista() {
-		return descontoAVista;
+	public BigDecimal getDescontoAVistaPercentual() {
+		return descontoAVistaPercentual;
 	}
 
-	public void setDescontoAVista(double descontoAVista) {
-		this.descontoAVista = descontoAVista;
+	public void setDescontoAVistaPercentual(BigDecimal descontoAVista) {
+		this.descontoAVistaPercentual = descontoAVista;
 	}
 
-	public double getJurosMensais() {
-		return jurosMensais;
+	public BigDecimal getJurosMensaisPercentuais() {
+		return jurosMensaisPercentuais;
 	}
 
-	public void setJurosMensais(double jurosMensais) {
-		this.jurosMensais = jurosMensais;
+	public void setJurosMensaisPercentuais(BigDecimal jurosMensais) {
+		this.jurosMensaisPercentuais = jurosMensais;
 	}
 
-	public double getEntrada() {
+	public BigDecimal getEntrada() {
 		return entrada;
 	}
 
-	public void setEntrada(double entrada) {
+	public void setEntrada(BigDecimal entrada) {
 		this.entrada = entrada;
 	}
 
 	public Orcamento getOrcamento() {
 		return orcamento;
 	}
-
+	
+	public boolean ehParcelado() {
+		return pagamentoEmVezes > 1;
+	}
+	
 	public void setOrcamento(Orcamento orcamento) {
 		this.orcamento = orcamento;
+		this.id = orcamento.getId();
 	}
 
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
-	public BigDecimal valorAVista() {
-		BigDecimal valorTotal = orcamento.calcularValorTotal();
-		BigDecimal descontoPercentual = BigDecimal.valueOf(descontoAVista).multiply(valorTotal);
-		return valorTotal.subtract(descontoPercentual);
-	}
-
-	public List<BigDecimal> parcelado() {
-		BigDecimal valorTotal = orcamento.calcularValorTotal();
-		BigDecimal valorDescontado = valorTotal.subtract(BigDecimal.valueOf(entrada));
-		List<BigDecimal> parcelas = new ArrayList<>();
-		BigDecimal juros = jurosMensais == 0 ? null : BigDecimal.valueOf(1 + jurosMensais);
-		for (int i = 0; i < pagamentoEmVezes; i++) {
-			BigDecimal parcela = valorDescontado.divide(BigDecimal.valueOf(pagamentoEmVezes), RoundingMode.CEILING);
-			if (juros != null) {
-				parcela = parcela.multiply(juros);
-			}
-			parcelas.add(parcela);
+	public List<FormatoPagamento> formatoPagamento() {
+		if (ehParcelado()) {
+			return parcelado();
+		} else {
+			return Arrays.asList(valorAVista());
 		}
-		return parcelas;
+	}
+
+	public FormatoPagamento valorAVista() {
+		if (ehParcelado())
+			throw new IllegalArgumentException("Valor à vista não pode ter mais de 1 parcela.");
+		return calculadora
+				.calcular(orcamento.calcularValorTotal(), 1, entrada, descontoAVistaPercentual, BigDecimal.ZERO)
+				.get(0);
+	}
+
+	public List<FormatoPagamento> parcelado() {
+		if (pagamentoEmVezes < 2)
+			throw new IllegalArgumentException("Valor parcelado deve possuír mais de 1 parcela.");
+		return calculadora.calcular(orcamento.calcularValorTotal(), pagamentoEmVezes, BigDecimal.ZERO, BigDecimal.ZERO,
+				jurosMensaisPercentuais);
 	}
 
 }

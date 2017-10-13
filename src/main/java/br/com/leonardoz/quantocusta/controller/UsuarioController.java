@@ -19,7 +19,6 @@ import br.com.leonardoz.quantocusta.apicontrato.EmailDto;
 import br.com.leonardoz.quantocusta.apicontrato.ErroDto;
 import br.com.leonardoz.quantocusta.apicontrato.AlterarSenhaDto;
 import br.com.leonardoz.quantocusta.apicontrato.ValidarEmailDto;
-import br.com.leonardoz.quantocusta.email.MailService;
 import br.com.leonardoz.quantocusta.email.TokenUrlService;
 
 import br.com.leonardoz.quantocusta.entidade.Usuario;
@@ -27,6 +26,7 @@ import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;
 import br.com.leonardoz.quantocusta.repositorio.UsuariosRepository;
 import br.com.leonardoz.quantocusta.seguranca.JwtTokenUtil;
 import br.com.leonardoz.quantocusta.seguranca.JwtUser;
+import br.com.leonardoz.quantocusta.servico.MailService;
 
 @RestController
 public class UsuarioController {

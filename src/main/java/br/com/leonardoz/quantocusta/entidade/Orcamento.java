@@ -34,6 +34,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -45,9 +47,27 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table(name = "orcamentos")
+@NamedQueries({
+	@NamedQuery(name=Orcamento.QUERY_CONTA_UNIDADES, query=
+			"SELECT COUNT(u.id) FROM Orcamento o " 
+			+ "INNER JOIN o.unidades u " 
+			+ "WHERE o.id = ?1)"),
+	@NamedQuery(name=Orcamento.QUERY_CONTA_ARTEFATOS, query=
+			"SELECT COUNT(a.id) FROM Artefato a " 
+			+ "INNER JOIN a.unidade u " 
+			+ "INNER JOIN u.orcamento o "
+			+ "WHERE o.id = ?1"),
+	@NamedQuery(name=Orcamento.QUERY_SOMA_VALOR_TOTAL, query=
+			"SELECT SUM(a.custo) FROM Artefato a " 
+			+ "INNER JOIN a.unidade u " 
+			+ "INNER JOIN u.orcamento o "
+			+ "WHERE o.id = ?1"),
+})
 public class Orcamento extends Entidade {
-
 	private static final long serialVersionUID = 1L;
+	public static final String QUERY_CONTA_ARTEFATOS = "Orcamento.contaArtefatos";
+	public static final String QUERY_CONTA_UNIDADES = "Orcamento.contaUnidades";
+	public static final String QUERY_SOMA_VALOR_TOTAL = "Orcamento.somaValorTotal";
 
 	@Column(name = "nome", length = 120)
 	private String nome;
@@ -65,7 +85,7 @@ public class Orcamento extends Entidade {
 	@Column(name = "responsavel", length = 120)
 	private String responsavel;
 
-	@OneToMany(mappedBy = "orcamento", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "orcamento", cascade = CascadeType.ALL)
 	private List<UnidadeDeSoftware> unidades;
 
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "orcamento", cascade = CascadeType.ALL)
@@ -159,7 +179,11 @@ public class Orcamento extends Entidade {
 
 	public BigDecimal calcularValorTotal() {
 		return unidades.stream().flatMap(u -> u.getArtefatos().stream()).map(Artefato::getCusto)
-				.reduce((a, b) -> a.add(b)).get();
+				.reduce((a, b) -> a.add(b)).orElse(BigDecimal.ZERO);
+	}
+
+	public Integer quantidadeDeUnidades() {
+		return unidades.size();
 	}
 
 	public Usuario getUsuario() {

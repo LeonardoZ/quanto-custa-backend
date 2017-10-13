@@ -1,4 +1,4 @@
-package br.com.leonardoz.quantocusta.email;
+package br.com.leonardoz.quantocusta.servico;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

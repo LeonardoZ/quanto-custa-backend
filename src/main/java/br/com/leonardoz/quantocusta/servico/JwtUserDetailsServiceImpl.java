@@ -1,4 +1,4 @@
-package br.com.leonardoz.quantocusta.seguranca.service;
+package br.com.leonardoz.quantocusta.servico;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

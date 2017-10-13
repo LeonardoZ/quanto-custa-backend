@@ -1,6 +1,8 @@
 package br.com.leonardoz.quantocusta.controller;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import br.com.leonardoz.quantocusta.entidade.Usuario;
 import br.com.leonardoz.quantocusta.exceptions.RecursoNaoEncontradoException;
 import br.com.leonardoz.quantocusta.repositorio.OrcamentosRepository;
 import br.com.leonardoz.quantocusta.repositorio.UsuariosRepository;
+import br.com.leonardoz.quantocusta.servico.OrcamentoService;
 
 @Transactional
 @RestController
@@ -33,22 +36,42 @@ public class OrcamentoController {
 	private OrcamentosRepository repositorio;
 
 	@Autowired
+	private OrcamentoService servico;
+
+	@Autowired
 	private ModelMapper mapper;
 
 	@GetMapping("/orcamentos/do/usuario/{usuarioUuid}")
 	public Page<OrcamentoDto> listar(Pageable pageable, @PathVariable String usuarioUuid) {
 		Usuario usuario = recuperarUsuario(usuarioUuid);
-		
-		Page<OrcamentoDto> pagina = repositorio
-				.findByUsuarioId(usuario.getId(), pageable)
-				.map(o -> mapper.map(o, OrcamentoDto.class));
+
+		Page<OrcamentoDto> pagina = repositorio.findByUsuarioId(usuario.getId(), pageable).map(o -> {
+			OrcamentoDto dto = mapper.map(o, OrcamentoDto.class);
+			completaDto(o, dto);
+			return dto;
+		});
 		return pagina;
 	}
 
 	@GetMapping("/orcamento/{uuid}")
 	public OrcamentoDto retornar(@PathVariable String uuid) throws RecursoNaoEncontradoException {
 		Orcamento orcamento = recuperarOrcamento(uuid);
-		return mapper.map(orcamento, OrcamentoDto.class);
+		OrcamentoDto dto = mapper.map(orcamento, OrcamentoDto.class);
+		completaDto(orcamento, dto);
+		return dto;
+	}
+
+	private void completaDto(Orcamento orcamento, OrcamentoDto dto) {
+		CompletableFuture<Integer> recuperaQuantidadeArtefatos = servico.recuperaQuantidadeArtefatos(orcamento);
+		CompletableFuture<Integer> recuperaQuantidadeUnidades = servico.recuperaQuantidadeUnidades(orcamento);
+		CompletableFuture<Double> calcularSomaTotal = servico.calcularSomaTotal(orcamento);
+		try {
+			dto.setQuantidadeArtefatos(recuperaQuantidadeArtefatos.get());
+			dto.setQuantidadeUnidades(recuperaQuantidadeUnidades.get());
+			dto.setValorTotal(calcularSomaTotal.get());
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@PostMapping("/orcamento/do/usuario/{usuarioUuid}")
@@ -85,14 +108,13 @@ public class OrcamentoController {
 	}
 
 	private Orcamento recuperarOrcamento(String uuid) {
-		Optional<Orcamento> encontrado = repositorio.findByUuid(uuid);
-		Orcamento orcamento = encontrado.orElseThrow(() -> new RecursoNaoEncontradoException("Orcamento"));
+		Orcamento orcamento = servico.recuperaOrcamento(uuid);
 		return orcamento;
 	}
-	
+
 	@Autowired
 	private UsuariosRepository usuarioRepository;
-	
+
 	private Usuario recuperarUsuario(String uuid) {
 		Optional<Usuario> encontrado = usuarioRepository.findByUuid(uuid);
 		Usuario usuario = encontrado.orElseThrow(() -> new RecursoNaoEncontradoException("Usuário"));
