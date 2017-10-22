@@ -37,10 +37,14 @@ public class CustomExceptionsHandler {
 		String mensagem = constraintCodeMap.get(ex.getConstraintName());
 		return Concatenador.concatenar(base, mensagem);
 	}
-
-
+//
+//	@ExceptionHandler(Exception.class)
+//	public ResponseEntity<ErroDto> defaultExceptionHandler(HttpServletRequest req, Exception ex) {
+//		return gerarErroDto(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, req);
+//	}
+	
 	@ExceptionHandler(RecursoNaoEncontradoException.class)
-	public ResponseEntity<ErroDto> exceptionHandler(HttpServletRequest req, RecursoNaoEncontradoException ex) {
+	public ResponseEntity<ErroDto> recurnoNaoEncontradoExceptionHandler(HttpServletRequest req, RecursoNaoEncontradoException ex) {
 		String mensagem = Concatenador.concatenar("Recurso do tipo ", ex.getTipoDeRecurso(),
 				" não encontrado com o UUID informado");
 		return gerarErroDto(mensagem, HttpStatus.BAD_REQUEST, req);
