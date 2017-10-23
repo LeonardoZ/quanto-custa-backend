@@ -44,14 +44,18 @@ public class PagamentoController {
 		Orcamento orcamento = recuperarOrcamento(orcamentoUuid);
 		Pagamento pagamento = recuperarPagamento(orcamento.getId());
 		PagamentoDto dto = mapper.map(pagamento, PagamentoDto.class);
+		calcularPagamento(pagamento, dto);
+		dto.setEhParcelado(pagamento.ehParcelado());
+		return dto;
+	}
+
+	private void calcularPagamento(Pagamento pagamento, PagamentoDto dto) {
 		dto.setCalculoPagamento(
 				pagamento.formatoPagamento()
 					.stream()
 					.map(f -> mapper.map(f, CalculoPagamentoDto.class))
 					.collect(Collectors.toList())
 				);
-		dto.setEhParcelado(pagamento.ehParcelado());
-		return dto;
 	}
 
 	@PostMapping("/orcamento/{orcamentoUuid}/pagamento")
@@ -61,7 +65,9 @@ public class PagamentoController {
 		Pagamento pagamento = mapper.map(dto, Pagamento.class);
 		pagamento.setOrcamento(orcamento);
 		Pagamento salvo = pagamentoRepositorio.save(pagamento);
-		return mapper.map(salvo, PagamentoDto.class);
+		PagamentoDto dtoSalvo = mapper.map(salvo, PagamentoDto.class);
+		calcularPagamento(pagamento, dtoSalvo);
+		return dtoSalvo;
 	}
 
 	@PutMapping("/orcamento/{orcamentoUuid}/pagamento")
@@ -77,7 +83,9 @@ public class PagamentoController {
 		pagamento.setOrcamento(orcamento);
 		orcamento.setPagamento(pagamento);
 		pagamento = pagamentoRepositorio.saveAndFlush(pagamento);
-		return mapper.map(pagamento, PagamentoDto.class);
+		PagamentoDto dtoAtualizado = mapper.map(pagamento, PagamentoDto.class);
+		calcularPagamento(pagamento, dtoAtualizado);
+		return dtoAtualizado;
 	}
 
 	@DeleteMapping("/orcamento/{orcamentoUuid}/pagamento")
